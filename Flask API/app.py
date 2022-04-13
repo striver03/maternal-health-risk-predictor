@@ -10,7 +10,7 @@ app = Flask(__name__)
 def home():
     return "Hello Rishabh"
 
-@app.route('/predict',methods=['POST'])
+@app.route('/predict',methods=['GET','POST'])
 def predict():
     age = request.form.get('age')
     systolicBP = request.form.get('systolicBP')
