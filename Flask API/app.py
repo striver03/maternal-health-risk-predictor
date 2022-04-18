@@ -1,5 +1,5 @@
 from flask import Flask,request,jsonify
-import pickle
+import pickle, sklearn
 import numpy as np
 
 model = pickle.load(open('model.pkl','rb'))
@@ -10,19 +10,20 @@ app = Flask(__name__)
 def home():
     return "Hello Rishabh"
 
-@app.route('/predict',methods=['GET','POST'])
+@app.route('/predict',methods=['GET'])
 def predict():
-    age = request.form.get('age')
-    systolicBP = request.form.get('systolicBP')
-    diastolicBP = request.form.get('diastolicBP')
-    bloodSugar = request.form.get('bloodSugar')
-    bodyTemp = request.form.get('bodyTemp')
-    heartRate = request.form.get('heartRate')
+    age = request.args['age']
+    systolicBP = request.args['systolicBP']
+    diastolicBP = request.args['diastolicBP']
+    bloodSugar = request.args['bloodSugar']
+    bodyTemp = request.args['bodyTemp']
+    heartRate = request.args['heartRate']
 
     inputQuery = np.array([age,systolicBP,diastolicBP,bloodSugar,bodyTemp,heartRate])
-    result = model.predict(inputQuery)
+    queryReshaped = inputQuery.reshape(1,-1)
+    result = model.predict(queryReshaped)
 
-    return jsonify({"Health Risk": str(result)})
+    return jsonify({"RiskLevel": str(result)})
 
 if __name__ == '__main__':
     app.run(debug=True)
